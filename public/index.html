@@ -9,16 +9,19 @@ and open the template in the editor.
         <title>SKNF Builder</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/page.css" rel="stylesheet">
     </head>
     <body>
-        Введите формулу: <label for="formula"></label><input id="formula">
+        <div class="center">
+            Введите формулу: <label for="formula"></label><input id="formula">
 
-        <p>
-            <button id="run" onclick="buildFormulaWithPrinting()">Построить СКНФ</button>
-        </p>
+            <p>
+                <button id="run" onclick="buildFormulaWithPrinting()">Построить СКНФ</button>
+            </p>
 
-        <div id="answer"></div>
+            <div id="answer"></div>
 
-        <script src="js/builder.js"></script>
+            <script src="js/builder.js"></script>
+        </div>
     </body>
 </html>
