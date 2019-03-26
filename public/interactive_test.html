@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Testing</title>
+        <link href="css/page.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="center">
+            <p>
+                <label for="formula">Формула: </label><input id="formula" disabled>
+                <input type="file" id="files"/>
+            </p>
+
+            <p>
+                <button id="prev" onclick="prevTest()">Предыдущая формула</button>
+                <button id="next" onclick="nextTest()">Следующая формула</button>
+            </p>
+
+            <p>
+                <button id="test" onclick="goToMain()">Перейти в обычный режим</button>
+            </p>
+
+            <fieldset>
+                <legend>Выберите ответ</legend>
+                <div id="options">
+                    <p>
+                        <input name="radio_button" type="radio" value="Да">
+                        <label>Да</label>
+                    </p>
+
+                    <p>
+                        <input name="radio_button" type="radio" value="Нет">
+                        <label>Нет</label>
+                    </p>
+                </div>
+
+                <button id="check" onclick="startTest()">Проверить</button>
+            </fieldset>
+
+            <div id="answer"></div>
+        </div>
+
+
+        <script src="js/builder.js"></script>
+        <script src="js/interactive.js"></script>
+        <script src="js/navigation.js"></script>
+    </body>
+</html>

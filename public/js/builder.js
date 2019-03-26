@@ -1,8 +1,10 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*
+ * Лабораторная работа 2 по дисциплине ЛОИС
+ * Выполнена студентом группы 621701 БГУИР Новицким Владиславом Александровичем
+ * Скрипт предназначен для построения СКНФ на основе введённой формулы
+ * Версия №1
+ *
+*/
 
 function buildFormulaWithPrinting() {
     let formula = document.getElementById("formula").value;
@@ -19,9 +21,9 @@ function buildFormula(formula) {
 
     let truthTable = buildTruthTable(formula, interpretation, subforms);
 
-    let sknfFormula = "";
-
     let disjuncts = buildAllDisjuncts(interpretation, truthTable);
+
+    let sknfFormula = "";
 
     let disjunctsNumber = disjuncts.length;
 
