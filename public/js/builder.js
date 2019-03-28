@@ -2,8 +2,7 @@
  * Лабораторная работа 2 по дисциплине ЛОИС
  * Выполнена студентом группы 621701 БГУИР Новицким Владиславом Александровичем
  * Скрипт предназначен для построения СКНФ на основе введённой формулы
- * Версия №1
- *
+ * Версия №2 Добавлено выведение окна ошибок при их появлении во время выполнения
 */
 
 function buildFormulaWithPrinting() {
@@ -13,60 +12,24 @@ function buildFormulaWithPrinting() {
 }
 
 function buildFormula(formula) {
-    let atoms = findAllUniqueAtoms(formula);
-
-    let interpretation = buildInterpretation(atoms);
-
-    let subforms = findAllSubforms(formula);
-
-    let truthTable = buildTruthTable(formula, interpretation, subforms);
-
-    let disjuncts = buildAllDisjuncts(interpretation, truthTable);
-
     let sknfFormula = "";
 
-    let disjunctsNumber = disjuncts.length;
+    try {
+        let interpretation = buildInterpretation(formula);
 
-    for (let i = 0; i < disjunctsNumber; i++) {
-        if (i > 0 && i !== disjunctsNumber - 1) {
-            sknfFormula += "&(";
-        } else if (i > 0 && i === disjunctsNumber - 1) {
-            sknfFormula += '&';
-        }
+        let truthTable = buildTruthTable(formula, interpretation);
 
-        sknfFormula += disjuncts[i];
-    }
-
-    for (let i = 0; i < disjunctsNumber - 2; i++) {
-        sknfFormula += ')';
-    }
-
-    if (disjunctsNumber > 1) {
-        sknfFormula = '(' + sknfFormula + ')';
+        sknfFormula = buildConjunctionByFullTable(interpretation, truthTable);
+    } catch (e) {
+        alert(e + "\n(Please, check input formula for compliance logic formula)");
     }
 
     return sknfFormula;
 }
 
-function findAllUniqueAtoms(formula) {
-    let atoms = formula.match(/[A-Z]+\d*/g);
+function buildInterpretation(formula) {
+    let atoms = findAllUniqueAtoms(formula);
 
-    return uniqueArray(atoms);
-}
-
-function uniqueArray(arr) {
-    let object = {};
-
-    for (let i = 0; i < arr.length; i++) {
-        let element = arr[i];
-
-        object[element] = true;
-    }
-
-    return Object.keys(object);
-}
-
-function buildInterpretation(atoms) {
     let columnsNumber = atoms.length;
     let linesNumber = Math.pow(2, columnsNumber);
     let interpretation = [];
@@ -83,6 +46,24 @@ function buildInterpretation(atoms) {
     }
 
     return interpretation;
+}
+
+function findAllUniqueAtoms(formula) {
+    let atoms = formula.match(/[A-Z]+\d*/g);
+
+    return getUniqueArray(atoms);
+}
+
+function getUniqueArray(arr) {
+    let object = {};
+
+    for (let i = 0; i < arr.length; i++) {
+        let element = arr[i];
+
+        object[element] = true;
+    }
+
+    return Object.keys(object);
 }
 
 function convertToBinaryWithLength(number, length) {
@@ -180,11 +161,11 @@ function findOperandInRightPart(formula, operatorIndex) {
     return formula.substring(operatorIndex + 1, i);
 }
 
-function buildTruthTable(formula, interpretation, subforms) {
+function buildTruthTable(formula, interpretation) {
     let truthTable = [];
 
+    let subforms = findAllSubforms(formula);
     let linesNumber = interpretation.length;
-
     for (let i = 0; i < linesNumber; i++) {
         truthTable.push(calculateSubform(formula, subforms, interpretation[i]));
     }
@@ -192,18 +173,28 @@ function buildTruthTable(formula, interpretation, subforms) {
     return truthTable;
 }
 
-function calculateSubform(subformKey, subforms, interpretationLine) {
+function calculateSubform(subformStr, subforms, interpretationLine) {
     let result;
 
-    let currentSubform = subforms[subformKey];
-
-    if (currentSubform !== undefined) {
-        result = performOperation(currentSubform, subforms, interpretationLine)
+    if (isConstant(subformStr)) {
+        result = Number(subformStr);
+    } else if (isAtom(subformStr)) {
+        result = interpretationLine[subformStr];
     } else {
-        result = interpretationLine[subformKey];
+        let currentSubform = subforms[subformStr];
+        result = performOperation(currentSubform, subforms, interpretationLine)
     }
 
     return result;
+}
+
+function isConstant(formula) {
+    return formula === "1" || formula === "0";
+}
+
+function isAtom(formula) {
+    let unaryComplexPat = /^[A-Z]+\d*$/;
+    return unaryComplexPat.test(formula);
 }
 
 function performOperation(currentSubform, subforms, interpretationLine) {
@@ -307,4 +298,32 @@ function convertToDisjunct(interpretationLine) {
     }
 
     return disjunct;
+}
+
+function buildConjunctionByFullTable(interpretation, truthTable) {
+    let sknfFormula = "";
+
+    let disjuncts = buildAllDisjuncts(interpretation, truthTable);
+
+    let disjunctsNumber = disjuncts.length;
+
+    for (let i = 0; i < disjunctsNumber; i++) {
+        if (i > 0 && i !== disjunctsNumber - 1) {
+            sknfFormula += "&(";
+        } else if (i > 0 && i === disjunctsNumber - 1) {
+            sknfFormula += '&';
+        }
+
+        sknfFormula += disjuncts[i];
+    }
+
+    for (let i = 0; i < disjunctsNumber - 2; i++) {
+        sknfFormula += ')';
+    }
+
+    if (disjunctsNumber > 1) {
+        sknfFormula = '(' + sknfFormula + ')';
+    }
+
+    return sknfFormula;
 }
